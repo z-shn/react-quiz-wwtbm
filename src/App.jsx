@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Quiz from './components/Quiz';
+import data from './data';
 //=====================================================================
 function App() {
-  const [qno, setQNO] = useState(5);
+  const [qno, setQNO] = useState(1);
+  const [timeOver, setTimeOver] = useState(false);
+  const [prize, setPrize] = useState('$ 0');
   const moneyPyramid = [
     { id: 1, amount: '$ 100' },
     { id: 2, amount: '$ 200' },
@@ -22,18 +25,35 @@ function App() {
     { id: 15, amount: '$ 1000000' },
   ].reverse();
 
+  useEffect(() => {
+    qno > 1 &&
+      setPrize(moneyPyramid.find((item) => item.id === qno - 1).amount);
+  }, [qno]);
+
   //========================================= RETURN
 
   return (
     <div className="app">
       <div className="main">
-        <div className="top">
-          <div className="timer">30</div>
-        </div>
-        <div className="bottom">
-          <Quiz />
-        </div>
+        {timeOver ? (
+          <h1 className="prizeText"> You earned : {prize}</h1>
+        ) : (
+          <>
+            <div className="top">
+              <div className="timer">30</div>
+            </div>
+            <div className="bottom">
+              <Quiz
+                data={data}
+                setTimeOver={setTimeOver}
+                qno={qno}
+                setQNO={setQNO}
+              />
+            </div>
+          </>
+        )}
       </div>
+
       <div className="pyramid">
         <ul className="moneyList">
           {moneyPyramid.map((item) => (
